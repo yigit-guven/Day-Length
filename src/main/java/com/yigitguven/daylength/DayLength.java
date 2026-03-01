@@ -67,7 +67,7 @@ public class DayLength {
 
                 // If players are sleeping, let vanilla handle the jump to morning if we are skipping night
                 // Vanilla sleep logic increments time by (24000 - time % 24000)
-                if (level.getSleepStatus().allPlayersSleeping()) {
+                if (level.players().stream().allMatch(net.minecraft.world.entity.player.Player::isSleeping)) {
                     // When everyone is sleeping, we let the vanilla daylight cycle take over for a bit or we simulate it
                     // But usually, vanilla will jump time to 0 (morning) if doDaylightCycle is true.
                     // If we disabled doDaylightCycle, we need to handle it.

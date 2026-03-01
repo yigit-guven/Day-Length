@@ -11,7 +11,7 @@ loaderVersion="${loader_version_range}" #mandatory This is typically bumped ever
 # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
 license="${mod_license}"
 # A URL to refer people to when problems occur with this mod
-issueTrackerURL="https://www.anchorstudios.site/issues" #optional
+issueTrackerURL="https://github.com/yigit-guven/Day-Length/issues" #optional
 # If your mod is purely client-side and has no multiplayer functionality (be it dedicated servers or Open to LAN),
 # set this to true, and Forge will set the correct displayTest for you and skip loading your mod on dedicated servers.
 #clientSideOnly=true #optional - defaults to false if absent
@@ -24,9 +24,9 @@ version="${mod_version}" #mandatory
 # A display name for the mod
 displayName="${mod_name}" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification https://docs.minecraftforge.net/en/latest/misc/updatechecker/
-updateJSONURL="https://raw.githubusercontent.com/Anchor-Studios/Day-Length/refs/heads/main/update.json" #optional
+# updateJSONURL=""
 # A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://www.anchorstudios.site/wiki/day-length" #optional
+displayURL="https://github.com/yigit-guven/Day-Length" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="logo.png" #optional
 # A text field displayed in the mod UI
@@ -42,9 +42,9 @@ authors="${mod_authors}" #optional
 #displayTest="MATCH_VERSION" # if nothing is specified, MATCH_VERSION is the default when clientSideOnly=false, otherwise IGNORE_ALL_VERSION when clientSideOnly=true (#optional)
 
 # The description text for the mod (multi line!) (#mandatory)
-description='''${mod_description}'''
+description='''Day Length mod lets players customize Minecraft's day-night cycle and sync it with real-world time. Version 3.0.0 features smoother transitions and fixed sleep logic.'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.${mod_id}]] #optional
+[[dependencies.daylength]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -58,18 +58,11 @@ description='''${mod_description}'''
     # Side this dependency is applied on - BOTH, CLIENT, or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies.${mod_id}]]
+[[dependencies.daylength]]
     modId="minecraft"
     mandatory=true
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
     versionRange="${minecraft_version_range}"
-    ordering="NONE"
-    side="BOTH"
-
-[[dependencies.${mod_id}]]
-    modId="ancore"
-    mandatory=true
-    versionRange="[4.0.0,5.0.0)"
     ordering="NONE"
     side="BOTH"
 

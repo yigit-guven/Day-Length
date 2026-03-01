@@ -1,8 +1,6 @@
 # Day Length
 
-![License](https://img.shields.io/github/license/yigit-guven/Day-Length?style=flat-square)
-
-**Day Length** by Yigit Guven gives you absolute control over Minecraft's time progression. Whether you want a strictly realistic 24-hour cycle or custom-speed days for your unique playstyle, this mod handles it with precision and smoothness.
+**Day Length** gives you absolute control over Minecraft's time progression. Whether you want a strictly realistic 24-hour cycle or custom-speed days for your unique playstyle, this mod handles it with precision and smoothness.
 
 ---
 

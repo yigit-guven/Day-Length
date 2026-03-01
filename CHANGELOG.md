@@ -1,7 +1,10 @@
+- **Config Button**: Added a "Config" button to the mod list that opens the configuration file directly in the system editor for faster management.
+- **Improved Sleeping**: Corrected sleep logic to ensure players can skip the night normally while custom day lengths are active (but not in real-time sync mode).
+- **Gradle & Environment Fix**: Restored missing `gradle-wrapper.jar` and configured `JAVA_HOME` to ensure build compatibility with Forge 1.20.1.
+- **Code Fixes**: Resolved compilation errors related to `level.getSleepStatus()`.
 - **Cloud/Sun Jitter**: Rewrote time ticking logic to only update `dayTime` when a full tick is accumulated. This significantly reduces packet spam and eliminates the "vibrant" sky movement.
-- **Sleeping**: Fixed sleeping functionality. The mod now correctly detects when players are sleeping and allows vanilla Minecraft to handle the time jump to morning.
 - **Real-Time Sync**: Improved real-time sync with better UTC offset handling and smooth transitions.
-- **Configuration**: Replaced in-game Gamerules with a standard Forge config file (`daylength-server.toml`). Settings are now persistent and easier to manage.
+- **Configuration**: Replaced in-game Gamerules with a standard Forge config file (`daylength-common.toml`).
 - **Code Cleanup**: Removed unnecessary dependencies (ancore) and cleaned up "AI-generated" boilerplate/comments.
 - **Performance**: Optimized server ticking to reduce overhead when the mod is not actively overriding time.
 - Dependency on `ancore`.

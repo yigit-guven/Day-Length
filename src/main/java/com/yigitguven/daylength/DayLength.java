@@ -80,18 +80,23 @@ public class DayLength {
             for (ServerLevel level : server.getAllLevels()) {
                 if (!level.dimensionType().natural()) continue;
 
-                // If players are sleeping, let vanilla handle the jump to morning if we are skipping night
-                // Vanilla sleep logic increments time by (24000 - time % 24000)
-                if (level.players().stream().allMatch(net.minecraft.world.entity.player.Player::isSleeping)) {
-                    // When everyone is sleeping, we let the vanilla daylight cycle take over for a bit or we simulate it
-                    // But usually, vanilla will jump time to 0 (morning) if doDaylightCycle is true.
-                    // If we disabled doDaylightCycle, we need to handle it.
-                    continue; 
+                // Handle sleep behavior
+                // If all players are sleeping and we are NOT synced with real time,
+                // let vanilla handle the jump to morning by enabling doDaylightCycle.
+                if (level.players().stream().anyMatch(net.minecraft.world.entity.player.Player::isSleeping)) {
+                    if (level.players().stream().allMatch(net.minecraft.world.entity.player.Player::isSleeping) && !realTimeSync) {
+                        if (!level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+                            level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(true, server);
+                        }
+                        continue; 
+                    }
                 }
 
                 if (isModActive) {
                     // Disable vanilla for this level while we are ticking
-                    level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, server);
+                    if (level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+                        level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(false, server);
+                    }
                     
                     long currentTime = level.getDayTime();
                     long nextTime = calculateNextTime(level, server);

@@ -1,13 +1,18 @@
 package com.yigitguven.daylength;
 
 import com.mojang.logging.LogUtils;
+import net.minecraft.Util;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.GameRules;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.loading.FMLPaths;
+import java.io.File;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -41,6 +46,16 @@ public class DayLength {
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
         context.registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
+        
+        // Register the config screen factory so the "Config" button appears in the mod list
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, 
+            () -> new ConfigScreenHandler.ConfigScreenFactory((mc, lastScreen) -> {
+                File configFile = FMLPaths.CONFIGDIR.get().resolve(MODID + "-common.toml").toFile();
+                if (configFile.exists()) {
+                    Util.getPlatform().openFile(configFile);
+                }
+                return lastScreen;
+            }));
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

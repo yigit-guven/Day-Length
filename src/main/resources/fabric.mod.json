@@ -5,15 +5,16 @@
 	"name": "Day Length",
 	"description": "Day Length mod lets players customize Minecraft's day-night cycle and sync it with real-world time.",
 	"authors": [
-		"yigit-guven"
+		"Yigit Guven"
 	],
 	"contact": {
 		"homepage": "https://github.com/yigit-guven/Day-Length",
 		"sources": "https://github.com/yigit-guven/Day-Length",
+		"issues": "https://github.com/yigit-guven/Day-Length/issues",
 		"discord": "https://discord.gg/gNajXYku5z"
 	},
 	"license": "GNU GPLv3",
-	"icon": "assets/day-length/icon.png",
+	"icon": "assets/day-length/squareicon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -34,6 +35,11 @@
 		"cloth-config2": "*"
 	},
 	"custom": {
-		"modmenu:icon": "assets/day-length/squareicon.png"
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/gNajXYku5z",
+				"modmenu.issues": "https://github.com/yigit-guven/Day-Length/issues"
+			}
+		}
 	}
 }

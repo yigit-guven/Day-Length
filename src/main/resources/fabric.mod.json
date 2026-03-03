@@ -9,7 +9,8 @@
 	],
 	"contact": {
 		"homepage": "https://github.com/yigit-guven/Day-Length",
-		"sources": "https://github.com/yigit-guven/Day-Length"
+		"sources": "https://github.com/yigit-guven/Day-Length",
+		"discord": "https://discord.gg/gNajXYku5z"
 	},
 	"license": "GNU GPLv3",
 	"icon": "assets/day-length/icon.png",
@@ -17,6 +18,9 @@
 	"entrypoints": {
 		"main": [
 			"net.yigitguven.daylength.DayLength"
+		],
+		"modmenu": [
+			"net.yigitguven.daylength.integration.DayLengthModMenu"
 		]
 	},
 	"depends": {
@@ -24,5 +28,12 @@
 		"minecraft": "~1.20.1",
 		"java": ">=17",
 		"fabric-api": "*"
+	},
+	"suggests": {
+		"modmenu": "*",
+		"cloth-config2": "*"
+	},
+	"custom": {
+		"modmenu:icon": "assets/day-length/squareicon.png"
 	}
 }

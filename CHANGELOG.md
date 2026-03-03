@@ -1,0 +1,3 @@
+- New high-quality Minecraft-style banner logo with "Day Length" text for better mod page presentation.
+- Unused language files (`en_us.json`, `de_de.json`, etc.) to reduce mod footprint, as translations are not currently utilized.
+- Refactored project structure and cleaned up redundant resource directories.

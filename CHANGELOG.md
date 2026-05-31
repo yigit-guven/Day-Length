@@ -1,3 +1,3 @@
-- New high-quality Minecraft-style banner logo with "Day Length" text for better mod page presentation.
-- Unused language files (`en_us.json`, `de_de.json`, etc.) to reduce mod footprint, as translations are not currently utilized.
-- Refactored project structure and cleaned up redundant resource directories.
+- Fixed: Sleeping behavior — the mod no longer prevents vanilla's sleep-to-morning skip.
+	- Respects vanilla `playersSleepingPercentage` gamerule when available; falls back to requiring all players.
+	- Avoids immediately overriding the morning jump by deferring mod time control until after the skip.

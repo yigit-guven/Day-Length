@@ -32,6 +32,7 @@ public class DayLength {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final long VANILLA_DAY_LENGTH = 24000L;
     private static final Map<ServerLevel, Double> timeAccumulator = new HashMap<>();
+    private static final Map<ServerLevel, Long> sleepSkipMap = new HashMap<>();
 
     private static class TransitionState {
         long startTime;
@@ -80,15 +81,41 @@ public class DayLength {
             for (ServerLevel level : server.getAllLevels()) {
                 if (!level.dimensionType().natural()) continue;
 
-                // Handle sleep behavior
-                // If all players are sleeping and we are NOT synced with real time,
-                // let vanilla handle the jump to morning by enabling doDaylightCycle.
-                if (level.players().stream().anyMatch(net.minecraft.world.entity.player.Player::isSleeping)) {
-                    if (level.players().stream().allMatch(net.minecraft.world.entity.player.Player::isSleeping) && !realTimeSync) {
+                // If we've recently allowed vanilla to skip to morning due to sleeping,
+                // avoid overriding the time until the morning tick has been reached.
+                Long skipUntil = sleepSkipMap.get(level);
+                if (skipUntil != null) {
+                    if (level.getDayTime() < skipUntil) {
                         if (!level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
                             level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(true, server);
                         }
-                        continue; 
+                        continue;
+                    } else {
+                        sleepSkipMap.remove(level);
+                    }
+                }
+
+                // Handle sleep behavior
+                // If enough players are sleeping (according to config) and we are NOT synced with real time,
+                // let vanilla handle the jump to morning by enabling doDaylightCycle.
+                long sleepingCount = level.players().stream().filter(net.minecraft.world.entity.player.Player::isSleeping).count();
+                long totalCount = level.players().stream().filter(p -> !p.isSpectator() && p.isAlive()).count();
+                Integer vanillaPercent = tryReadVanillaPlayersSleepingPercentage(level);
+                int requiredPercent = vanillaPercent != null ? vanillaPercent : 100;
+
+                if (sleepingCount > 0 && totalCount > 0 && !realTimeSync) {
+                    int percent = (int)((sleepingCount * 100L) / totalCount);
+                    if (percent >= requiredPercent) {
+                        // Allow vanilla to handle the skip-to-morning. Remember the next morning
+                        // tick so we don't immediately override it on the following server tick.
+                        long currentDay = level.getDayTime() / VANILLA_DAY_LENGTH;
+                        long nextMorning = (currentDay + 1) * VANILLA_DAY_LENGTH;
+                        sleepSkipMap.put(level, nextMorning + 1L);
+
+                        if (!level.getGameRules().getBoolean(GameRules.RULE_DAYLIGHT)) {
+                            level.getGameRules().getRule(GameRules.RULE_DAYLIGHT).set(true, server);
+                        }
+                        continue;
                     }
                 }
 
@@ -112,6 +139,41 @@ public class DayLength {
                     }
                 }
             }
+        }
+
+        private static Integer tryReadVanillaPlayersSleepingPercentage(ServerLevel level) {
+            try {
+                // Search for a static GameRules field that looks like the players-sleeping-percentage rule
+                for (java.lang.reflect.Field f : GameRules.class.getFields()) {
+                    if (!java.lang.reflect.Modifier.isStatic(f.getModifiers())) continue;
+                    String name = f.getName().toUpperCase();
+                    if (!name.contains("SLEEP") || !name.contains("PLAYER")) continue;
+
+                    Object key = f.get(null);
+                    if (key == null) continue;
+
+                    // Try GameRules.getRule(key)
+                    try {
+                        java.lang.reflect.Method getRule = GameRules.class.getMethod("getRule", key.getClass());
+                        Object rule = getRule.invoke(level.getGameRules(), key);
+                        if (rule == null) continue;
+
+                        // Attempt to find a zero-arg getter that returns a number
+                        for (java.lang.reflect.Method m : rule.getClass().getMethods()) {
+                            if (m.getParameterCount() != 0) continue;
+                            String mname = m.getName().toLowerCase();
+                            if (!(mname.equals("get") || mname.equals("getvalue") || mname.equals("getint") || mname.equals("getasint"))) continue;
+                            Object val = m.invoke(rule);
+                            if (val instanceof Number) return ((Number) val).intValue();
+                        }
+                    } catch (NoSuchMethodException ignored) {
+                        // try alternative: getRule to return a registered rule value via other APIs
+                    }
+                }
+            } catch (Throwable t) {
+                // ignore and fallback
+            }
+            return null;
         }
 
         private static long calculateNextTime(ServerLevel level, MinecraftServer server) {
